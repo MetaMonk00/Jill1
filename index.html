@@ -79,8 +79,7 @@ nav {
 
 /* ── HERO ── */
 .hero {
-  position: relative; min-height: 100svh; display: flex; align-items: center;
-  display: flex; align-items: center; overflow: hidden;
+  position: relative; min-height: 100svh; display: flex; align-items: center; overflow: hidden;
 }
 .hero-bg {
   position: absolute; inset: 0; z-index: 0;
@@ -180,7 +179,7 @@ p.sec-p { font-size: 1rem; color: var(--mid); font-weight: 300; line-height: 1.8
 }
 .svc-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(196,86,122,.12); }
 .svc-img { height: 200px; overflow: hidden; }
-.svc-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+.svc-img img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; transition: transform .4s; }
 .svc-card:hover .svc-img img { transform: scale(1.05); }
 .svc-body { padding: 1.5rem; }
 .svc-body h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; margin-bottom: .5rem; }
@@ -332,10 +331,47 @@ footer { background: #110808; padding: 70px 5% 40px; }
   .trust-bar { gap: 1.25rem; }
   .ti { font-size: .65rem; }
   .services, .why-section, .reviews, .pricing { padding: 70px 4%; }
-  .svc-grid { grid-template-columns: 1fr; }
+  .svc-grid {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    margin: 0 -4%;
+    padding-left: 4%;
+    padding-right: 4%;
+  }
+  .svc-grid::-webkit-scrollbar { display: none; }
+  .svc-card {
+    flex: 0 0 82vw;
+    max-width: 320px;
+    scroll-snap-align: start;
+  }
+  .svc-img { height: 180px; }
   .why-grid { grid-template-columns: 1fr; }
   .why-img img { height: 320px; }
-  .reviews-grid { grid-template-columns: repeat(2,1fr); }
+  .reviews-grid {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    gap: 1rem;
+    margin: 0 -4%;
+    padding-left: 4%;
+    padding-right: 4%;
+    padding-bottom: 1rem;
+  }
+  .reviews-grid::-webkit-scrollbar { display: none; }
+  .review-card {
+    flex: 0 0 82vw;
+    max-width: 320px;
+    scroll-snap-align: start;
+    /* Fix uneven heights — make reviewer always at bottom */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
   .about-section { grid-template-columns: 1fr; }
   .about-img { min-height: 280px; }
   .about-img::after { background: linear-gradient(to top, rgba(28,16,8,.8), transparent); }
@@ -349,6 +385,30 @@ footer { background: #110808; padding: 70px 5% 40px; }
 }
 @supports (padding: max(0px)) {
   footer { padding-bottom: max(40px, calc(20px + env(safe-area-inset-bottom))); }
+}
+
+/* Mobile scroll containers */
+@media (max-width: 768px) {
+  .svc-grid { scroll-padding-left: 4%; }
+  .svc-grid::after { content: ''; flex: 0 0 4vw; display: block; }
+  .reviews-grid { scroll-padding-left: 4%; }
+  .reviews-grid::after { content: ''; flex: 0 0 4vw; display: block; }
+}
+@media (max-width: 768px) {
+  .scroll-hint {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 1rem; color: var(--light); font-size: .75rem;
+    font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
+  }
+  .scroll-hint svg {
+    width: 14px; height: 14px; fill: none;
+    stroke: var(--light); stroke-width: 2;
+    stroke-linecap: round; stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+}
+@media (min-width: 769px) {
+  .scroll-hint { display: none; }
 }
 </style>
 </head>
@@ -402,7 +462,7 @@ footer { background: #110808; padding: 70px 5% 40px; }
     <h1>Your dog deserves<br>to look <em>absolutely<br>amazing</em></h1>
     <p>Premium, one-on-one grooming by a passionate professional with 5 years of experience. No rush, no shortcuts — calm, expert care from start to finish.</p>
     <div class="hero-btns">
-      <a href="booking.html" class="btn-primary">
+      <a href="https://booking.moego.pet/ol/landing?name=JillsPetSpaw" target="_blank" class="btn-primary">
         <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         Book an Appointment
       </a>
@@ -430,7 +490,7 @@ footer { background: #110808; padding: 70px 5% 40px; }
     <div class="sec-label">What We Offer</div>
     <h2 class="sec-h">Everything Your Pup <em>Needs</em></h2>
     <p class="sec-p">From quick add-ons to full groom packages — expert grooming for every breed, size, and coat type at transparent, upfront pricing.</p>
-    <div class="svc-grid">
+    <div class="svc-grid" id="svc-scroll">
       <a href="services.html#full-groom" class="svc-card">
         <div class="svc-img"><img src="https://images.unsplash.com/photo-1535930891776-0c2dfb7fda1a?w=600&h=400&fit=crop&crop=center&q=80" alt="Full dog groom"></div>
         <div class="svc-body">
@@ -440,7 +500,7 @@ footer { background: #110808; padding: 70px 5% 40px; }
         </div>
       </a>
       <a href="services.html#bath-brush" class="svc-card">
-        <div class="svc-img"><img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&h=400&fit=crop&crop=center&q=80" alt="Bath and brush"></div>
+        <div class="svc-img"><img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&h=400&fit=crop&crop=top&q=80" alt="Bath and brush"></div>
         <div class="svc-body">
           <h3>Bath &amp; Brush</h3>
           <p>Full shampoo and condition, blow dry, brush-out, nail trim, and ear cleaning. Perfect maintenance between full grooms.</p>
@@ -480,6 +540,10 @@ footer { background: #110808; padding: 70px 5% 40px; }
         </div>
       </a>
     </div>
+    <div class="scroll-hint">
+      <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      Swipe to see more
+    </div>
     <div class="view-all"><a href="services.html" class="btn-outline">View All Services &amp; Add-Ons <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
   </div>
 </section>
@@ -516,6 +580,10 @@ footer { background: #110808; padding: 70px 5% 40px; }
     <div class="sec-label">Real Google Reviews</div>
     <h2 class="sec-h">What Freeport Pet Parents <em>Are Saying</em></h2>
     <p class="sec-p" style="margin-bottom:3rem;">Don't take our word for it — here's what our actual clients say about their experience at Jill's Pet Spaw.</p>
+    <div class="scroll-hint" style="margin-bottom:.75rem;">
+      <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      Swipe to read more
+    </div>
     <div class="reviews-grid">
 
       <div class="review-card">
